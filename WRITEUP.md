@@ -1,5 +1,19 @@
 # Project Write-Up
 
+The model I have used in my project is 'frozen_inference_graph'. This model was taken from website:
+http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz
+
+I converted the model to an Intermediate Representation with the following arguments:
+* To download the model: 
+```wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz```
+* To unzip the model: 
+```tar -xvf ssd_mobilenet_v2_coco_2018_03_29.tar.gz```
+* To switch directory: 
+```cd ssd_mobilenet_v2_coco_2018_03_29```
+* To convert the model to intermediate representation(IR) format:
+```python /opt/intel/openvino/deployment_tools/model_optimizer/mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json --reverse_input_channel```
+
+
 You can use this document as a template for providing your project write-up. However, if you
 have a different format you prefer, feel free to use it as long as you answer all required
 questions.
