@@ -33,7 +33,6 @@ class Network:
     Load and configure inference plugins for the specified target devices 
     and performs synchronous and asynchronous modes for the specified infer requests.
     """
-
     def __init__(self):
         ### TODO: Initialize any class variables desired ###
         self.plugin = None
@@ -48,27 +47,19 @@ class Network:
         model_xml = model
         model_bin = os.path.splitext(model)[0]+".bin"
         self.plugin = IECore()
-        
         if cpu_extension and "CPU" in device:
             self.plugin.add_extension(cpu_extension, device)
-            
         self.network = IENetwork(model=model_xml, weights=model_bin)
-        
         self.exec_network = self.plugin.load_network(self.network, device)
-        
         self.input_blob = next(iter(self.network.inputs))
         self.output_blob = next(iter(self.network.outputs))
         
         ### TODO: Check for supported layers ###
         supported_layers = self.plugin.query_network(self.network, device)
         unsupported_layers = [l for l in self.network.layers.keys() if l not in supported_layers]
-        
         if len(unsupported_layers) != 0:
             print("Some layers are not supported !")
             exit()
-        
-        ### TODO: Add any necessary extensions ### #Done
-        ### TODO: Return the loaded inference plugin ###
         return 
 
     def get_input_shape(self):
@@ -77,14 +68,11 @@ class Network:
 
     def exec_net(self, image, req_id=0):
         ### TODO: Start an asynchronous request ###
-        ### TODO: Return any necessary information ###
-
         self.exec_network.start_async(request_id=req_id, inputs={self.input_blob : image})
         return
 
     def wait(self):
         ### TODO: Wait for the request to be complete. ###
-        ### TODO: Return any necessary information ###
         status = self.exec_network.requests[0].wait(-1)
         return status
 

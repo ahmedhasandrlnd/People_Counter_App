@@ -1,26 +1,3 @@
-"""People Counter."""
-"""
- Copyright (c) 2018 Intel Corporation.
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit person to whom the Software is furnished to do so, subject to
- the following conditions:
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-"""
-
-
-
 import os
 import sys
 import time
@@ -61,8 +38,7 @@ def draw_boxes(frame, result, args, width, height, prob_threshold):
                 xmax = int(box[5] * width)
                 ymax = int(box[6] * height)
                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (0,0,255))
-                
-    return frame, person_count, ((xmin, ymin), (xmax, ymax))
+     return frame, person_count, ((xmin, ymin), (xmax, ymax))
 
 
 def build_argparser():
@@ -103,7 +79,6 @@ def check_bounding_box(prev_box, width):
     Checks if the previous bounding box lies in center then 
     return True else return false
     """
-    
     if( width - 300 < prev_box[0][0]):
         return False
     else:
@@ -117,8 +92,7 @@ def infer_on_stream(args, client):
     :param client: MQTT client
     :return: None
     """
-    
-    ## Variable Intialization
+     ## Variable Intialization
     input_file = str(args.input)
     model_xml = args.model
     cpu_ext = args.cpu_extension
@@ -144,17 +118,14 @@ def infer_on_stream(args, client):
     
     ### TODO: Handle the input stream ###
     img_flag = False
-    
     if input_file.endswith('.jpeg') or input_file.endswith('.png') or input_file.endswith('.bmp') or input_file.endswith('.jpg'):
         img_flag = True
     elif input_file.upper() == "CAM":
         input_file = 0
-  
     cap = cv2.VideoCapture(input_file)
     cap.open(input_file)
     width = int(cap.get(3))
     height = int(cap.get(4))
-    
     if not img_flag:
         out = cv2.VideoWriter('out.mp4', 0x00000021, 30, (width, height))
     else:
@@ -169,12 +140,9 @@ def infer_on_stream(args, client):
             p_img, curr_count, box = extract_info_and_draw_boxes(img_frame.copy(), result, args, width, height, prob_threshold)
             cv2.putText(p_img, "People Count : "+str(curr_count), (30, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2)
             cv2.imwrite('output_img.jpg', p_img)
-            
         client.disconnect()
         cap.release()
         return
-        
-        
     ### TODO: Loop until stream is over ###
     while(cap.isOpened()):    
         
@@ -183,36 +151,23 @@ def infer_on_stream(args, client):
         if not flag:
             break
         key_pressed = cv2.waitKey(60)
-        
         ### TODO: Pre-process the image as needed ###
         p_frame = cv2.resize(frame.copy(), (net_input_shape[3], net_input_shape[2]))
         p_frame = p_frame.transpose((2,0,1))
         p_frame = p_frame.reshape(1, *p_frame.shape)
-        
         start = time.time()
-        
         ### TODO: Start asynchronous inference for specified request ###
         infer_network.exec_net(p_frame)
-        
         ### TODO: Wait for the result ###
         if infer_network.wait() == 0:
-            
             inf_time = time.time() - start
-            
             ### TODO: Get the results of the inference request ###
             result = infer_network.get_output()
             p_frame, curr_count, box  = draw_boxes(frame.copy(), result, args, width, height, prob_threshold)
-            
-            message = "Inference time: {:.3f}ms"\
-                               .format(inf_time * 1000)
-            
-            cv2.putText(p_frame, message, (15, 15),
-                        cv2.FONT_HERSHEY_COMPLEX, 0.5, (200, 10, 10), 1)
-            
-            
+            message = "Inference time: {:.3f}ms".format(inf_time * 1000)
+            cv2.putText(p_frame, message, (15, 15),cv2.FONT_HERSHEY_COMPLEX, 0.5, (200, 10, 10), 1)
             if(box[0][0] is not None):
                 prev_box = box
-                
             if prev_count > curr_count:
                 if frame_buffer <= 10:
                     curr_count = prev_count
@@ -229,24 +184,12 @@ def infer_on_stream(args, client):
                 frame_buffer = 0
                 total_count += curr_count - prev_count
                 client.publish("person", json.dumps({"total":total_count}))
-    
-            
             prev_count = curr_count
             client.publish("person", json.dumps({"count":curr_count}))
-            
-            ### TODO: Extract any desired stats from the results ###     
-            ### TODO: Calculate and send relevant information on ###
-            ### current_count, total_count and duration to the MQTT server
-            ### Topic "person": keys of "count" and "total" ###
-            ### Topic "person/duration": key of "duration" ###
-            
-        
         ### TODO: Send the frame to the FFMPEG server ###
         out.write(p_frame)
-        
         sys.stdout.buffer.write(p_frame)
         sys.stdout.flush()
-        
         if key_pressed == 27:
             break
         ### TODO: Write an output image if `single_image_mode` ###
