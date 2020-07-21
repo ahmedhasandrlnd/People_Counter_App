@@ -4,7 +4,7 @@
 |-----------------------|---------------|
 | Programming Language: |  Python 3.5 or 3.6 |
 
-![people-counter-python](people-counter.gif)
+![people-counter-python](people_counter.gif)
 
 ## What it Does
 
