@@ -1,6 +1,6 @@
 # Project Write-Up
 
-The model I have used in my project is 'frozen_inference_graph'. This model was taken from website:
+The model I have used in my project is 'SSD_Modelnet_v2'. This model was taken from website:
 http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz
 
 I converted the model to an Intermediate Representation with the following arguments:
@@ -16,9 +16,7 @@ I converted the model to an Intermediate Representation with the following argum
 
 ## Explaining Custom Layers
 
-While converting pre-trained model into IR, Model Optimizer searches for each layer of the input model in the list of known layers.The list of known layers is different for each of supported frameworks.
-
-Custom layers are layers that are not included into a list of known layers. If your topology contains any layers that are not in the list of known layers, the Model Optimizer classifies them as custom.
+While converting pre-trained model into IR, Model Optimizer searches for each layer of the input model in the list of known layers.The list of known layers is different for each of supported frameworks. Some of the layers in a topology are not included into the list of known layers. The layers that are not in the list of known layers are known as custom layers.
 
 Custom layers are important to use because:
 * If your layer output shape depends on dynamic parameters, input data or previous layers parameters, calculation of output shape of the layer via model used can be incorrect. In this case, you need to patch it on your own.
@@ -29,48 +27,25 @@ Some of the potential reasons for handling custom layers is to optimize our pre-
 
 ## Comparing Model Performance
 
-My method(s) to compare models before and after conversion to Intermediate Representations
-were...
+Although models are shriked in size and run faster inference  after conversion, that does not ensure a higher inference accuracy. In fact, there will be some loss of accuracy as a result of potential changes like lower precision. 
 
-The difference between model accuracy pre- and post-conversion was...
+The size of the model pre- and post-conversion were 67 MB and 65 MB respectively.
 
-The size of the model pre- and post-conversion was...
-
-The inference time of the model pre- and post-conversion was...
+The inference time of the model pre- and post-conversion were 50ms and 60 ms respectively.
 
 ## Assess Model Use Cases
 
-Some of the potential use cases of the people counter app are...
+We have used a similar model to visulaize rush hour traffic in my other [project](https://github.com/ahmedhasandrlnd/rush_hour_traffic_visualization).
 
-Each of these use cases would be useful because...
+![Rush hour traffic](rush7.gif)
 
 ## Assess Effects on End User Needs
 
-Lighting, model accuracy, and camera focal length/image size have different effects on a
-deployed edge model. The potential effects of each of these are as follows...
+Lighting, model accuracy, and camera focal length/image size have different effects on a deployed edge model. The potential effects of each of these are as follows:
 
-## Model Research
+* In case of poor lighting model's accuracy may fail dramatically or even completely drop close to zero.
 
-[This heading is only required if a suitable model was not found after trying out at least three
-different models. However, you may also use this heading to detail how you converted 
-a successful model.]
+* Natural decrease in model accuracy during conversion or other stages may make the model unusable.
 
-In investigating potential people counter models, I tried each of the following three models:
+* Distorted input from camera due to change in focal length and/or image size will affect the model because the model may fail to make sense of the input and the distored input may not be detected properly by the model. 
 
-- Model 1: [Name]
-  - [Model Source]
-  - I converted the model to an Intermediate Representation with the following arguments...
-  - The model was insufficient for the app because...
-  - I tried to improve the model for the app by...
-  
-- Model 2: [Name]
-  - [Model Source]
-  - I converted the model to an Intermediate Representation with the following arguments...
-  - The model was insufficient for the app because...
-  - I tried to improve the model for the app by...
-
-- Model 3: [Name]
-  - [Model Source]
-  - I converted the model to an Intermediate Representation with the following arguments...
-  - The model was insufficient for the app because...
-  - I tried to improve the model for the app by...
