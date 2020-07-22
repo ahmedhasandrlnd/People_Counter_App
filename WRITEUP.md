@@ -1,6 +1,6 @@
 # Project Write-Up
 
-The model I have used in my project is 'SSD_Modelnet_v2'. This model was taken from website:
+The model I have used in my project is 'SSD ModelNet V2'. This model was taken from website:
 http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz
 
 I converted the model to an Intermediate Representation with the following arguments:
@@ -35,7 +35,7 @@ The inference time of the model pre- and post-conversion were 50ms and 60 ms res
 
 ## Assess Model Use Cases
 
-We have used a similar model to visulaize rush hour traffic in my other [project](https://github.com/ahmedhasandrlnd/rush_hour_traffic_visualization).
+I have used a similar model to visulaize rush hour traffic in my other [project](https://github.com/ahmedhasandrlnd/rush_hour_traffic_visualization).
 
 ![Rush hour traffic](rush7.gif)
 
