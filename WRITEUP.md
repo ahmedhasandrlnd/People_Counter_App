@@ -16,7 +16,7 @@ I converted the model to an Intermediate Representation with the following argum
 
 ## Explaining Custom Layers
 
-While converting pre-trained model into IR, Model Optimizer searches for each layer of the input model in the list of known layers.The list of known layers is different for each of supported frameworks. Some of the layers in a topology are not included into the list of known layers. The layers that are not in the list of known layers are known as custom layers.
+While converting pre-trained model into IR, Model Optimizer searches for each layer of the input model in the list of known layers. The list of known layers is different for each of supported frameworks. Some of the layers in a topology might not be included into the list of known layers. The layers that are not in the list of known layers are known as custom layers.
 
 Custom layers are important to use because:
 * If your layer output shape depends on dynamic parameters, input data or previous layers parameters, calculation of output shape of the layer via model used can be incorrect. In this case, you need to patch it on your own.
@@ -32,6 +32,20 @@ Although models are shriked in size and run faster inference  after conversion, 
 The size of the model pre- and post-conversion were 67 MB and 65 MB respectively.
 
 The inference time of the model pre- and post-conversion were 50ms and 60 ms respectively.
+
+Though in some frames the model could not detect a person, it can successfully detect 6 persons in total. The average duration also changes throughout the video as shown in the following table:
+
+| Total Person detected | Average duration  |
+|-----------------------|-------------------|
+|           1           |     0.21s         |
+|           2           |     0.27s         |
+|           3           |     0.28s         |
+|           4           |     0.26S         |
+|           5           |     0.29s         |
+|           6           |     0.27s         |
+|-----------------------|-------------------|
+
+![people-counter-python](people_counter.gif)   
 
 ## Assess Model Use Cases
 
@@ -49,3 +63,7 @@ Lighting, model accuracy, and camera focal length/image size have different effe
 
 * Distorted input from camera due to change in focal length and/or image size will affect the model because the model may fail to make sense of the input and the distored input may not be detected properly by the model. 
 
+## Model Research
+[This heading is only required if a suitable model was not found after trying out at least three different models. However, you may also use this heading to detail how you converted a successful model.]
+
+Our 'SSD ModelNet V2' model was sufficient for the app since it detected all 6 persons in the video with their average duration times.
